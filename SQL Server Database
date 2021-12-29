@@ -1,0 +1,166 @@
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('PLATS')
+            and   name  = 'FAIRE_FK'
+            and   indid > 0
+            and   indid < 255)
+   drop index PLATS.FAIRE_FK
+go
+
+if exists (select 1
+            from  sysobjects
+           where  id = object_id('PLATS')
+            and   type = 'U')
+   drop table PLATS
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('PRODUIT')
+            and   name  = 'CONSERVER_FK'
+            and   indid > 0
+            and   indid < 255)
+   drop index PRODUIT.CONSERVER_FK
+go
+
+if exists (select 1
+            from  sysobjects
+           where  id = object_id('PRODUIT')
+            and   type = 'U')
+   drop table PRODUIT
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('RECETTE')
+            and   name  = 'APPARTENIR___AVOIR_FK'
+            and   indid > 0
+            and   indid < 255)
+   drop index RECETTE.APPARTENIR___AVOIR_FK
+go
+
+if exists (select 1
+            from  sysobjects
+           where  id = object_id('RECETTE')
+            and   type = 'U')
+   drop table RECETTE
+go
+
+if exists (select 1
+            from  sysobjects
+           where  id = object_id('RESTAURANT')
+            and   type = 'U')
+   drop table RESTAURANT
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('STOCKAGE')
+            and   name  = 'COMPTE_FK'
+            and   indid > 0
+            and   indid < 255)
+   drop index STOCKAGE.COMPTE_FK
+go
+
+if exists (select 1
+            from  sysobjects
+           where  id = object_id('STOCKAGE')
+            and   type = 'U')
+   drop table STOCKAGE
+go
+
+/*==============================================================*/
+/* Table : PLATS                                                */
+/*==============================================================*/
+create table PLATS (
+   ID_PLAT              int                  not null,
+   ID_RECETTE           int                  not null,
+   TITRE                char(100)            null,
+   NB_PERSONNE          int                  null,
+   PREPARATION          char(7)              null,
+   CUISSON              char(7)              null,
+   REPOS                char(20)             null,
+   INGREDIENTS          text                 null,
+   RECETTE              text                 null,
+   ACCOMPAGNEMENT       char(20)             null,
+   constraint PK_PLATS primary key nonclustered (ID_PLAT)
+)
+go
+
+/*==============================================================*/
+/* Index : FAIRE_FK                                             */
+/*==============================================================*/
+create index FAIRE_FK on PLATS (
+ID_RECETTE ASC
+)
+go
+
+/*==============================================================*/
+/* Table : PRODUIT                                              */
+/*==============================================================*/
+create table PRODUIT (
+   ID_PRODUIT           int                  not null,
+   ID_STOCKAGE          int                  not null,
+   NOM_PRODUIT          char(50)             null,
+   QUANTITE             int                  null,
+   constraint PK_PRODUIT primary key nonclustered (ID_PRODUIT)
+)
+go
+
+/*==============================================================*/
+/* Index : CONSERVER_FK                                         */
+/*==============================================================*/
+create index CONSERVER_FK on PRODUIT (
+ID_STOCKAGE ASC
+)
+go
+
+/*==============================================================*/
+/* Table : RECETTE                                              */
+/*==============================================================*/
+create table RECETTE (
+   ID_RECETTE           int                  not null,
+   ID_RESTAURANT        int                  not null,
+   CATEGORIE            char(256)            null,
+   constraint PK_RECETTE primary key nonclustered (ID_RECETTE)
+)
+go
+
+/*==============================================================*/
+/* Index : APPARTENIR___AVOIR_FK                                */
+/*==============================================================*/
+create index APPARTENIR___AVOIR_FK on RECETTE (
+ID_RESTAURANT ASC
+)
+go
+
+/*==============================================================*/
+/* Table : RESTAURANT                                           */
+/*==============================================================*/
+create table RESTAURANT (
+   ID_RESTAURANT        int                  not null,
+   NOM_RESTAURANT       char(40)             null,
+   LIEUX                char(50)             null,
+   constraint PK_RESTAURANT primary key nonclustered (ID_RESTAURANT)
+)
+go
+
+/*==============================================================*/
+/* Table : STOCKAGE                                             */
+/*==============================================================*/
+create table STOCKAGE (
+   ID_STOCKAGE          int                  not null,
+   ID_RESTAURANT        int                  not null,
+   TYPE                 char(15)             null,
+   constraint PK_STOCKAGE primary key nonclustered (ID_STOCKAGE)
+)
+go
+
+/*==============================================================*/
+/* Index : COMPTE_FK                                            */
+/*==============================================================*/
+create index COMPTE_FK on STOCKAGE (
+ID_RESTAURANT ASC
+)
+go
+
